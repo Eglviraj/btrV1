@@ -1,20 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Battery Status Example</title>
+  <title>Battery Status Example (Real-time & Charging)</title>
 </head>
 <body>
-    <p>Current battery charge level:</p>
-    <span id="batteryLevel"></span>
+  <p>Current battery charge level:</p>
+  <span id="batteryLevel"></span>
+  <p id="chargingStatus"></p>
 
-    <script>
-        navigator.getBattery().then(function(batteryManager) {
-            // Get current charge in percentages.
-            var level = batteryManager.level * 100;
-            document.getElementById("batteryLevel").textContent = level + "%";
-        }).catch(function(e) {
-            console.error(e);
-        });
-    </script>
+  <script>
+    var previousLevel = null;
+
+    function checkBatteryStatus() {
+      navigator.getBattery().then(function(batteryManager) {
+        var level = batteryManager.level * 100;
+        document.getElementById("batteryLevel").textContent = level + "%";
+
+        if (previousLevel !== null && level > previousLevel) {
+          // Likely charging
+          document.getElementById("chargingStatus").textContent = "Charging";
+        } else {
+          document.getElementById("chargingStatus").textContent = "";
+        }
+        previousLevel = level;
+      });
+    }
+
+    navigator.getBattery().then(function(batteryManager) {
+      // Initial display
+      checkBatteryStatus();
+
+      // Monitor battery changes
+      batteryManager.addEventListener('batterychange', checkBatteryStatus);
+    }).catch(function(e) {
+      console.error(e);
+    });
+
+    // Start polling for charging detection (adjust interval as needed)
+    setInterval(checkBatteryStatus, 5000); // Check every 5 seconds
+  </script>
 </body>
 </html>
