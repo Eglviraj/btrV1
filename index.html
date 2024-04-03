@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battery Status</title>
+</head>
+<body>
+    <h1>Battery Status</h1>
+    <p id="battery-level">Getting battery information...</p>
+    <script>
+        // Function to display battery information
+        function showBatteryInfo(battery) {
+            const level = battery.level * 100; // Get percentage (0-1) * 100
+            const chargingStatus = battery.charging ? "Charging" : "Discharging";
+            document.getElementById("battery-level").textContent = `Level: ${level}% - ${chargingStatus}`;
+        }
+
+        // Check for browser support
+        if (navigator.battery) {
+            navigator.battery.then(showBatteryInfo);
+        } else {
+            document.getElementById("battery-level").textContent = "This browser does not support the Battery Status API.";
+        }
+    </script>
+</body>
+</html>
